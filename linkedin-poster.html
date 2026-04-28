@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LinkedIn Poster — Linguistic Communication</title>
+  <style>
+    :root {
+      --bg:     #0B0F19;
+      --panel:  #0F1524;
+      --card:   #151C2B;
+      --line:   #263047;
+      --text:   #E6E9EF;
+      --muted:  #9AA4B2;
+      --blue:   #6AA7FF;
+      --purple: #A78BFA;
+      --green:  #10B981;
+      --red:    #EF4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 36px;
+      width: 100%;
+      max-width: 620px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .logo-row img {
+      width: 52px; height: 52px;
+      object-fit: contain;
+      border-radius: 10px;
+      background: #fff;
+      padding: 5px;
+      border: 1px solid var(--line);
+    }
+
+    h1 { font-size: 21px; font-weight: 800; color: var(--blue); text-align: center; margin-bottom: 4px; }
+    .subtitle { text-align: center; color: var(--muted); font-size: 13px; margin-bottom: 28px; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      margin-bottom: 5px;
+      margin-top: 16px;
+    }
+
+    .section-label:first-of-type { margin-top: 0; }
+
+    select, textarea {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 14px;
+      padding: 10px 13px;
+      outline: none;
+      transition: border-color .2s;
+      font-family: inherit;
+    }
+
+    select:focus, textarea:focus { border-color: var(--blue); }
+    select option { background: var(--card); }
+    textarea { resize: vertical; min-height: 200px; line-height: 1.5; }
+
+    .divider { border: none; border-top: 1px solid var(--line); margin: 22px 0; }
+
+    .btn {
+      display: block; width: 100%;
+      padding: 13px;
+      border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 800;
+      cursor: pointer;
+      transition: filter .15s, transform .1s;
+      margin-top: 12px;
+    }
+
+    .btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: #0B0F19;
+    }
+
+    .btn-secondary {
+      background: var(--card);
+      border: 1px solid var(--line);
+      color: var(--text);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--green), #34d399);
+      color: #0B0F19;
+    }
+
+    .btn-linkedin {
+      background: linear-gradient(135deg, #0A66C2, #004182);
+      color: #fff;
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .alert {
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 16px;
+      font-size: 14px;
+      font-weight: 600;
+      display: none;
+    }
+
+    .alert.success { background: rgba(16,185,129,.1); border: 1px solid var(--green); color: var(--green); display: block; }
+    .alert.error   { background: rgba(239,68,68,.1);  border: 1px solid var(--red);   color: var(--red); display: block; }
+
+    .preview-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .preview-card .app-icon { font-size: 28px; margin-right: 10px; }
+    .preview-card .app-title { font-weight: 700; color: var(--blue); font-size: 16px; }
+    .preview-card .app-cat { color: var(--purple); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+    .preview-card .app-desc { color: var(--muted); font-size: 13px; margin-top: 8px; line-height: 1.4; }
+    .preview-card .app-url { color: var(--blue); font-size: 12px; margin-top: 6px; word-break: break-all; }
+
+    .preview-header {
+      display: flex;
+      align-items: center;
+    }
+
+    .char-count {
+      text-align: right;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .char-count.over { color: var(--red); font-weight: 700; }
+
+    .hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    footer { margin-top: 24px; color: var(--muted); font-size: 12px; text-align: center; }
+
+    .hidden { display: none; }
+
+    .history-item {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-top: 8px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .history-item .date { color: var(--muted); }
+    .history-item .title { color: var(--blue); font-weight: 600; }
+
+    .attachment-preview {
+      margin-top: 16px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--card);
+    }
+
+    .attachment-preview img {
+      width: 100%;
+      display: block;
+    }
+
+    .attachment-label {
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .attachment-label .badge {
+      background: var(--purple);
+      color: #0B0F19;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo-row">
+    <img src="assets/linguistic-communication-logo.jpg" alt="Linguistic Communication">
+  </div>
+
+  <h1>📣 LinkedIn Webapp Poster</h1>
+  <p class="subtitle">Pick a webapp, generate a post, and share it on LinkedIn</p>
+
+  <!-- Category Filter -->
+  <div class="section-label">Category</div>
+  <select id="categorySelect">
+    <option value="all">All Categories</option>
+    <option value="Digital Technologies">Digital Technologies</option>
+    <option value="Agile">Agile</option>
+    <option value="Artificial Intelligence">Artificial Intelligence</option>
+    <option value="Software Development">Software Development</option>
+    <option value="Management">Management</option>
+    <option value="Communication">Communication</option>
+  </select>
+
+  <hr class="divider">
+
+  <!-- Random Pick -->
+  <button class="btn btn-primary" id="btnRandom">🎲 Pick Random Webapp</button>
+
+  <!-- App Preview -->
+  <div class="preview-card hidden" id="appPreview">
+    <div class="preview-header">
+      <span class="app-icon" id="appIcon"></span>
+      <div>
+        <div class="app-title" id="appTitle"></div>
+        <div class="app-cat" id="appCat"></div>
+      </div>
+    </div>
+    <div class="app-desc" id="appDesc"></div>
+    <div class="app-url" id="appUrl"></div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Generated Post -->
+  <div class="section-label">LinkedIn Post</div>
+  <textarea id="postText" placeholder="Click 'Pick Random Webapp' to generate a post..."></textarea>
+  <div class="char-count" id="charCount">0 / 3,000 characters</div>
+
+  <!-- Image Attachment -->
+  <div class="section-label">Image Attachment</div>
+  <div class="attachment-preview">
+    <img src="assets/linguistic-communication-logo.jpg" alt="Linguistic Communication Logo" id="attachmentImg">
+    <div class="attachment-label">
+      <span class="badge">Attached</span>
+      This logo will be included with your LinkedIn post
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Action Buttons -->
+  <div class="btn-row">
+    <button class="btn btn-success" id="btnCopy">📋 Copy Post</button>
+    <button class="btn btn-linkedin" id="btnLinkedIn">🔗 Open LinkedIn</button>
+  </div>
+
+  <div class="alert" id="alertBox"></div>
+
+  <hr class="divider">
+
+  <!-- Post History -->
+  <div class="section-label">Recent Posts</div>
+  <div id="history">
+    <p class="hint">No posts yet. Your posting history will appear here.</p>
+  </div>
+</div>
+
+<footer>Linguistic Communication &middot; American Business College</footer>
+
+<script>
+const WEBAPPS = {
+  "base_url": "https://linguistic-communication.com/webiles/",
+  "categories": [
+    {
+      "name": "Digital Technologies",
+      "icon": "🖥️",
+      "apps": [
+        {"title": "Hardware Architect", "path": "digital-technologies/apps/help-desk-hero.html", "description": "Step into the shoes of a hardware architect. Design and build systems for different scenarios."},
+        {"title": "System Builder Challenge", "path": "digital-technologies/apps/system-builder.html", "description": "Design and assemble an information system, balance your budget against real-world scenarios."},
+        {"title": "Enterprise Quest", "path": "digital-technologies/apps/businessapps.html", "description": "Tackle quick challenges and prove your business application smarts."},
+        {"title": "Mission: OS Control", "path": "digital-technologies/apps/Operating systems game.html", "description": "Step into the heart of the system, manage its core, and prove you can command the operating system like a pro!"},
+        {"title": "OSI Model Adventure", "path": "digital-technologies/apps/osi-model.html", "description": "An interactive challenge for network engineers. Unlock layers, take quizzes, and master networking concepts."},
+        {"title": "Packet Quest", "path": "digital-technologies/apps/packet-quest.html", "description": "Guide a data packet through the TCP/IP layers by answering quiz questions."},
+        {"title": "Network Navigator Game", "path": "digital-technologies/apps/LAN30components.html", "description": "Match the Tech! A drag-and-drop game where players match network components to their functions."},
+        {"title": "Cyber Defenders: Threat Hunt", "path": "digital-technologies/apps/cyber-defenders.html", "description": "Play as a cybersecurity agent. Stop attacks, decode threats, and catch hackers in quiz-based missions!"},
+        {"title": "Audit Ops: Secure the Network", "path": "digital-technologies/apps/audit-ops.html", "description": "Lead an IT security audit, allocate time, investigate risks, and protect the company from breaches!"},
+        {"title": "Prompt Engineering Challenge", "path": "digital-technologies/apps/index.html", "description": "Test your AI and agent prompting skills!"}
+      ]
+    },
+    {
+      "name": "Agile",
+      "icon": "🔄",
+      "apps": [
+        {"title": "User Story Splitting", "path": "agile/apps/user_story.html", "description": "Practice slicing large stories into valuable, testable increments."},
+        {"title": "Scrum Roles", "path": "agile/apps/scrum_roles.html", "description": "Step into real-world team scenarios and assign responsibilities correctly for Product Owner, Scrum Master, and Developers."},
+        {"title": "Scrum Mastery", "path": "agile/apps/scrum_master.html", "description": "Three-section assessment with 30 questions per section based on the Scrum Guide (2020)."},
+        {"title": "User Acceptance Test", "path": "agile/apps/User Acceptance Test.html", "description": "Simulate end-user validation to ensure features meet business needs before release."}
+      ]
+    },
+    {
+      "name": "Artificial Intelligence",
+      "icon": "🤖",
+      "apps": [
+        {"title": "Prompt Engineering Proving Ground", "path": "artificial-intelligence/apps/prompt-proving-ground.html", "description": "Interactive lab to test prompt frameworks, iterate quickly, and benchmark outputs."},
+        {"title": "Digital Strategy & Web Development", "path": "artificial-intelligence/apps/digital-strategy.html", "description": "Scenario simulator to align AI capabilities with content ops, automation, and product goals."},
+        {"title": "AI in Business Strategy Quest", "path": "artificial-intelligence/apps/ai-business-game-updated.html", "description": "Interactive quiz game with 7 progressive missions covering AI fundamentals through strategic deployment."},
+        {"title": "Prompt Engineering Challenge", "path": "artificial-intelligence/apps/index.html", "description": "Test your AI and agent prompting skills through practical challenges."}
+      ]
+    },
+    {
+      "name": "Software Development",
+      "icon": "💻",
+      "apps": [
+        {"title": "HTML Knowledge Challenge", "path": "software-development/apps/html-knowledge-challenge.html", "description": "Fix broken markup, choose the right elements, and practice semantic structure for accessibility and SEO."},
+        {"title": "CSS Quiz Challenge", "path": "software-development/apps/css-quiz-challenge.html", "description": "Tackle layout puzzles, selectors, and responsive techniques to develop proficiency with modern CSS."},
+        {"title": "User Acceptance Test", "path": "software-development/apps/User Acceptance Test.html", "description": "Turn user stories into clear acceptance criteria and verify features meet business needs."}
+      ]
+    },
+    {
+      "name": "Management",
+      "icon": "📊",
+      "apps": [
+        {"title": "System Builder Challenge", "path": "management/apps/system-builder.html", "description": "Design an end-to-end system by balancing performance, reliability, and cost against realistic scenarios."},
+        {"title": "Audit Ops: Secure the Network", "path": "management/apps/cyber-defenders.html", "description": "IT security audit simulation — prioritize risks, allocate time, and recommend controls."},
+        {"title": "Enterprise Quest", "path": "management/apps/enterprise-quest.html", "description": "Evaluate stakeholders, constraints, and outcomes to connect technology decisions with business objectives."}
+      ]
+    },
+    {
+      "name": "Communication",
+      "icon": "🎤",
+      "apps": [
+        {"title": "Pitch Perfect: Present Like a Pro", "path": "communication/apps/lan50_presentation.html", "description": "Enter realistic audience scenarios, answer on-the-spot questions, and practice confident, structured presentation delivery."},
+        {"title": "Scrum Roles", "path": "communication/apps/scrum_roles.html", "description": "Clarify ownership and responsibility in team situations across Product Owner, Scrum Master, and Developers."},
+        {"title": "User Acceptance Test", "path": "communication/apps/user-acceptance-test.html", "description": "Translate requirements into clear acceptance criteria, validate outcomes with stakeholders."},
+        {"title": "Cyber Defenders", "path": "communication/apps/cyber-defenders.html", "description": "Identify threats, respond to incidents, and communicate security risks to organizational stakeholders."}
+      ]
+    }
+  ]
+};
+
+const POST_TEMPLATES = [
+  (app, cat, url) => `Hey, look at this! 🎓
+
+This is "${app.title}" — a webapp we produced for our students!
+
+${app.description}
+
+Our students use it to revise and prepare for their tests online, anytime, anywhere. This week's spotlight is from our ${cat.name} collection ${cat.icon}
+
+🔗 Try it yourself: ${url}
+
+📚 See all our webapps: https://linguistic-communication.com/webiles/
+
+We can produce the same for YOUR school and students, tailored to YOUR curriculum! Whether it's ${getRelatedSubjects(cat.name)}, we build interactive learning tools that make studying engaging and effective.
+
+Interested in what we can create for your institution? Let's talk! 💬
+
+#EdTech #EducationTechnology #InteractiveLearning #WebApps #SchoolTech #DigitalLearning #CurriculumDesign #StudentSuccess`,
+
+  (app, cat, url) => `Check out what our students are using to study! 📱
+
+"${app.title}" — ${app.description}
+
+This interactive webapp is part of our ${cat.name} series ${cat.icon}, and our students love using it to prepare for exams and reinforce what they learn in class.
+
+🔗 Give it a try: ${url}
+
+📚 Explore all our webapps: https://linguistic-communication.com/webiles/
+
+Imagine having tools like this built specifically for YOUR school's curriculum! We create custom interactive webapps for educational institutions — covering ${getRelatedSubjects(cat.name)} and more.
+
+Let's connect and discuss how we can help your students succeed! 🚀
+
+#EdTech #OnlineLearning #InteractiveEducation #WebApps #StudentEngagement #DigitalClassroom #LearningTools #SchoolInnovation`,
+
+  (app, cat, url) => `🎯 Webapp Spotlight: "${app.title}"
+
+${app.description}
+
+This is one of the many interactive learning tools we've built for our students in the ${cat.name} program ${cat.icon}. They use these webapps to revise, practice, and prepare for their assessments — all online!
+
+🔗 Experience it here: ${url}
+
+📚 Browse our full collection: https://linguistic-communication.com/webiles/
+
+Are you a school looking for engaging digital learning resources? We specialize in creating interactive webapps tailored to YOUR curriculum — from ${getRelatedSubjects(cat.name)}.
+
+We'd love to help your students learn in a more engaging way. Reach out! ✉️
+
+#EdTech #Education #InteractiveLearning #WebDevelopment #SchoolTech #DigitalEducation #LearningApps #CurriculumDesign`,
+
+  (app, cat, url) => `Our students don't just read textbooks — they play, practice, and learn interactively! 🎮
+
+Meet "${app.title}" from our ${cat.name} collection ${cat.icon}:
+${app.description}
+
+These webapps help our students revise and prepare for their tests online, making learning accessible anytime, anywhere.
+
+🔗 Try it now: ${url}
+📚 All webapps: https://linguistic-communication.com/webiles/
+
+Here's the exciting part — we can build the same for YOUR school! Custom interactive webapps based on YOUR curriculum, covering subjects like ${getRelatedSubjects(cat.name)}.
+
+Every school deserves tools that make learning stick. Let's make it happen for yours! 💡
+
+#EdTech #EducationInnovation #InteractiveLearning #WebApps #DigitalLearning #SchoolTech #StudentSuccess #OnlineEducation`
+];
+
+function getRelatedSubjects(catName) {
+  const subjects = {
+    "Digital Technologies": "IT, networking, cybersecurity, or operating systems",
+    "Agile": "Agile methodologies, Scrum, or project management",
+    "Artificial Intelligence": "AI, prompt engineering, or digital strategy",
+    "Software Development": "HTML, CSS, web development, or software testing",
+    "Management": "business management, risk assessment, or enterprise systems",
+    "Communication": "presentations, teamwork, or stakeholder management"
+  };
+  return subjects[catName] || "any subject area";
+}
+
+let currentApp = null;
+let currentCat = null;
+
+function getFilteredApps() {
+  const filter = document.getElementById('categorySelect').value;
+  if (filter === 'all') return WEBAPPS.categories;
+  return WEBAPPS.categories.filter(c => c.name === filter);
+}
+
+function pickRandom() {
+  const cats = getFilteredApps();
+  if (!cats.length) return;
+  const cat = cats[Math.floor(Math.random() * cats.length)];
+  const app = cat.apps[Math.floor(Math.random() * cat.apps.length)];
+  const url = WEBAPPS.base_url + app.path;
+
+  currentApp = app;
+  currentCat = cat;
+
+  document.getElementById('appIcon').textContent = cat.icon;
+  document.getElementById('appTitle').textContent = app.title;
+  document.getElementById('appCat').textContent = cat.name;
+  document.getElementById('appDesc').textContent = app.description;
+  document.getElementById('appUrl').textContent = url;
+  document.getElementById('appPreview').classList.remove('hidden');
+
+  const template = POST_TEMPLATES[Math.floor(Math.random() * POST_TEMPLATES.length)];
+  const postText = template(app, cat, url);
+  document.getElementById('postText').value = postText;
+  updateCharCount();
+}
+
+function updateCharCount() {
+  const len = document.getElementById('postText').value.length;
+  const el = document.getElementById('charCount');
+  el.textContent = `${len.toLocaleString()} / 3,000 characters`;
+  el.className = len > 3000 ? 'char-count over' : 'char-count';
+}
+
+function showAlert(msg, type) {
+  const el = document.getElementById('alertBox');
+  el.textContent = msg;
+  el.className = `alert ${type}`;
+  setTimeout(() => { el.className = 'alert'; }, 4000);
+}
+
+function copyPost() {
+  const text = document.getElementById('postText').value;
+  if (!text.trim()) {
+    showAlert('Generate a post first!', 'error');
+    return;
+  }
+  navigator.clipboard.writeText(text).then(() => {
+    showAlert('Post copied to clipboard!', 'success');
+    saveToHistory();
+  }).catch(() => {
+    showAlert('Failed to copy — try selecting the text manually', 'error');
+  });
+}
+
+function openLinkedIn() {
+  const text = document.getElementById('postText').value;
+  if (!text.trim()) {
+    showAlert('Generate a post first!', 'error');
+    return;
+  }
+  navigator.clipboard.writeText(text).then(() => {
+    showAlert('Post copied! Paste it into the LinkedIn post editor.', 'success');
+    saveToHistory();
+  }).catch(() => {});
+  window.open('https://www.linkedin.com/in/linguisticcommunication/', '_blank');
+}
+
+function saveToHistory() {
+  if (!currentApp) return;
+  const history = JSON.parse(localStorage.getItem('linkedin_post_history') || '[]');
+  history.unshift({
+    title: currentApp.title,
+    category: currentCat.name,
+    date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+  });
+  if (history.length > 10) history.length = 10;
+  localStorage.setItem('linkedin_post_history', JSON.stringify(history));
+  renderHistory();
+}
+
+function renderHistory() {
+  const history = JSON.parse(localStorage.getItem('linkedin_post_history') || '[]');
+  const container = document.getElementById('history');
+  if (!history.length) {
+    container.innerHTML = '<p class="hint">No posts yet. Your posting history will appear here.</p>';
+    return;
+  }
+  container.innerHTML = history.map(h =>
+    `<div class="history-item">
+      <span class="title">${h.title}</span>
+      <span class="date">${h.category} &middot; ${h.date}</span>
+    </div>`
+  ).join('');
+}
+
+document.getElementById('btnRandom').addEventListener('click', pickRandom);
+document.getElementById('btnCopy').addEventListener('click', copyPost);
+document.getElementById('btnLinkedIn').addEventListener('click', openLinkedIn);
+document.getElementById('postText').addEventListener('input', updateCharCount);
+
+renderHistory();
+</script>
+</body>
+</html>
